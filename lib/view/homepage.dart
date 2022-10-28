@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:allphanes/Model/HomePage.dart';
 import 'package:allphanes/services/commentpost.dart';
 import 'package:allphanes/services/post.dart';
 import 'package:allphanes/services/posticontap.dart';
@@ -25,6 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  HomePageDataModel _homePageModel = HomePageDataModel();
   var scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _controler;
   SharedPreferences? allphanesuserdata;
@@ -77,10 +80,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     http.Response response = await http.get(Uri.parse(
         "https://api.allphanes.com/api/posts/multiplefilters?private=1&token=$userid&skip=12&&lang="));
-    var data = jsonDecode(response.body);
-    print(data);
+    var rsp = jsonDecode(response.body);
+    // var d = HomePageDataModel.fromJson(rsp);
+    // print(d);
+    log("===================================================" +
+        jsonDecode(response.body).toString());
     setState(() {
-      mycanvasdata = data;
+      mycanvasdata = rsp;
     });
   }
 
@@ -91,7 +97,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       vsync: this,
       duration: Duration(seconds: 1),
     );
-    CheckVersion();
+    // CheckVersion();
     fetchusercanvas();
   }
 
