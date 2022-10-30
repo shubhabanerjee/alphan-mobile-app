@@ -5,8 +5,6 @@ import 'package:allphanes/view/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -14,8 +12,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin{
-
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 3),
     vsync: this,
@@ -27,32 +25,28 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   SharedPreferences? allphanesuserdata;
   bool? isnewuser;
 
-  Future<void> checknewuser()async{
-    allphanesuserdata=await SharedPreferences.getInstance();
-    bool newuser=allphanesuserdata!.getBool("newuser") ??true;
-    setState((){
-      isnewuser=newuser;
+  Future<void> checknewuser() async {
+    allphanesuserdata = await SharedPreferences.getInstance();
+    bool newuser = allphanesuserdata!.getBool("newuser") ?? true;
+    setState(() {
+      isnewuser = newuser;
     });
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    checknewuser().then((value){
-      Timer(
-          Duration(seconds: 6),
-              (){
-            if(isnewuser==true){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LogIn()));
-            }
-            else{
-             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
-            }
-
-          }
-      );
+    checknewuser().then((value) {
+      Timer(Duration(seconds: 6), () {
+        if (isnewuser == true) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LogIn()));
+        } else {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
+        }
+      });
     });
-
   }
 
   @override
@@ -60,17 +54,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
-          child:AnimatedBuilder(
+          child: AnimatedBuilder(
             animation: _controller,
             child: Container(
               height: 200,
-              width: MediaQuery.of(context).size.width*.8,
+              width: MediaQuery.of(context).size.width * .8,
               decoration: BoxDecoration(
                 color: Colors.black,
                 boxShadow: [
@@ -78,15 +73,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     color: Colors.grey.withOpacity(1),
                     spreadRadius: 2,
                     blurRadius: 15,
-                    offset: Offset(5,10), // changes position of shadow
+                    offset: Offset(5, 10), // changes position of shadow
                   ),
                 ],
-
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image(
-                  image: AssetImage("images/splsh_logo.png"),fit: BoxFit.contain,
+                  image: AssetImage("images/splsh_logo.png"),
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
