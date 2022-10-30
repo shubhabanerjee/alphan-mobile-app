@@ -387,17 +387,5 @@ class _SharePostState extends State<SharePost> {
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
             ModalRoute.withName('/')));
-    //
-    // }
-    // else{
-    //   Fluttertoast.showToast(
-    //       msg: data["message"],
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: Color.fromRGBO(154,205,50,1),
-    //       textColor: Colors.red,
-    //       fontSize: 12.0
-    //   );
-    // }
   }
 }
