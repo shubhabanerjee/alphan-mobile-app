@@ -39,8 +39,8 @@ class _UserPostState extends State<UserPost> {
     String userid = allphanesuserdata!.getString("userid") ?? "";
     print(userid);
 
-    http.Response response =
-        await http.get(Uri.parse("https://api.allphanes.com/api/language"));
+    http.Response response = await http.get(
+        Uri.parse("https://powerful-shelf-35750.herokuapp.com/api/language"));
     var data = jsonDecode(response.body);
     print(data);
     setState(() {
@@ -59,8 +59,8 @@ class _UserPostState extends State<UserPost> {
     String userid = allphanesuserdata!.getString("userid") ?? "";
     print(userid);
 
-    http.Response response =
-        await http.get(Uri.parse("https://api.allphanes.com/api/postcategory"));
+    http.Response response = await http.get(Uri.parse(
+        "https://powerful-shelf-35750.herokuapp.com/api/postcategory"));
     var data = jsonDecode(response.body);
     print(data);
     setState(() {
@@ -80,7 +80,7 @@ class _UserPostState extends State<UserPost> {
     print(userid);
 
     http.Response response = await http.get(Uri.parse(
-        "https://api.allphanes.com/api/postsubcategory/$selecteddomain"));
+        "https://powerful-shelf-35750.herokuapp.com/api/postsubcategory/$selecteddomain"));
     var data = jsonDecode(response.body);
     print(data);
     setState(() {
@@ -971,33 +971,18 @@ class _UserPostState extends State<UserPost> {
 
   Future postUpload() async {
     allphanesuserdata = await SharedPreferences.getInstance();
-    final uri = Uri.parse("https://api.allphanes.com/api/posts/genarate");
+    final uri = Uri.parse(
+        "https://powerful-shelf-35750.herokuapp.com/api/posts/genarate");
     print("Image detail: $videofile");
     var request = http.MultipartRequest('POST', uri);
-    //request.files.add(await http.MultipartFile.fromPath("image", videofile!.path));
-    // request.files.add(await http.MultipartFile('image',
-    //     File(imagefile!.path).readAsBytes().asStream(),
-    //     File(imagefile!.path).lengthSync(),
-    //     filename: imagefile!.path.split("/").last));
-    request.fields['referenceUserId'] =
-        allphanesuserdata!.getString("userid").toString();
-    request.fields['postType'] = "Normal";
-    request.fields['postTitle'] = title.text;
-    request.fields['postMode'] = "normal";
-    //request.fields['isSaved']="false";
-    request.fields['text'] = description.text;
-    //request.fields['postCategory']=domain.text;
-    //request.fields['postSubDomain']=subdomain.text;
-    //request.fields['language']=language.text;
-    // request.fields['referenceLanguageId']=selectedlanguageid!;
-    //request.fields['referenceDomainId']=selecteddomain!;
-    //request.fields['referenceSubDomainId']=selectedsubdomain!;
-    request.fields['isFile'] = "true";
-    request.fields['keywords'] = hashtag.text;
-    request.fields['keywords2'] = "#${hashtag.text}";
-    request.fields['galleryType'] = imagefile != null ? "photos" : "video";
-    //request.fields['isFile']="true";
-
+    log(allphanesuserdata!.getString("userid").toString() +
+        "----------" +
+        title.text +
+        "  ========" +
+        description.text +
+        "=========" +
+        hashtag.text +
+        " =======");
     var image_videofile = imagefile != null
         ? await http.MultipartFile.fromPath(
             "image",
@@ -1009,19 +994,20 @@ class _UserPostState extends State<UserPost> {
                 videofile!.path,
               )
             : null;
-    //var image_videofile=await http.MultipartFile.fromPath("image",imagefile!.path);
-    //
-    // //await http.MultipartFile.fromPath("file","");
-    // imagefile!=null || videofile!=null?request.files.add(image_videofile!):null;
+    request.fields['referenceUserId'] =
+        allphanesuserdata!.getString("userid").toString();
+    request.fields['postType'] = "Normal";
+    request.fields['postTitle'] = title.text;
+    request.fields['postMode'] = "normal";
+    request.fields['text'] = description.text;
+    request.fields['isFile'] = image_videofile != null ? "true" : "false";
+    request.fields['keywords'] = hashtag.text;
+    request.fields['keywords2'] = "#${hashtag.text}";
 
-    request.files.add(image_videofile!);
+    request.fields['galleryType'] = imagefile != null ? "photos" : "video";
 
-    // var pic2=await http.MultipartFile.fromPath("identity_image_new",pickImageNew.path);
-    // request.files.add(pic2);
-    //request.files.add(await http.MultipartFile.fromPath("image",imagefile!.path,),);
-    //final headers = {"Content-type": "multipart/form-data"};
-    //request.files.add(await http.MultipartFile.fromBytes();
-    //request.headers.addAll(headers);
+    image_videofile != null ? request.files.add(image_videofile) : "";
+
     var response = await request.send();
 
     var data = response.statusCode;

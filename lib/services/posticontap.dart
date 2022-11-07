@@ -20,7 +20,7 @@ class IconButtonsTap {
           textColor: Colors.red,
           fontSize: 12.0);
     } else {
-      var APIURL = "https://api.allphanes.com/api/social/like";
+      var APIURL = "https://powerful-shelf-35750.herokuapp.com/api/social/like";
       Map mapeddate = {
         'referenceUserId': currentuserid,
         'referencePostId': postid,
@@ -44,7 +44,8 @@ class IconButtonsTap {
   }
 
   Future<void> TapOnFavorite(postuserid, postid) async {
-    var APIURL = "https://api.allphanes.com/api/social/markfavourite";
+    var APIURL =
+        "https://powerful-shelf-35750.herokuapp.com/api/social/markfavourite";
     Map mapeddate = {
       'referenceUserId': currentuserid,
       'referencePostId': postid,

@@ -23,7 +23,8 @@ class _InputMailIdState extends State<InputMailId> {
   var sendotpdata;
   Future sendOTP() async {
     //allphanesuserdata=await SharedPreferences.getInstance();
-    var APIURL = "https://api.allphanes.com/api/users/forgetpassword";
+    var APIURL =
+        "https://powerful-shelf-35750.herokuapp.com/api/users/forgetpassword";
     Map mapeddate = {
       'email': email.text,
     };

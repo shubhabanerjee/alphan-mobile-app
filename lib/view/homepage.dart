@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     print(userid);
 
     http.Response response = await http.get(Uri.parse(
-        "https://api.allphanes.com/api/posts/multiplefilters?private=1&token=$userid&skip=12&&lang="));
+        "https://powerful-shelf-35750.herokuapp.com/api/posts/multiplefilters?private=1&token=$userid&skip=12&&lang="));
     var rsp = jsonDecode(response.body);
     // var d = HomePageDataModel.fromJson(rsp);
     // print(d);
