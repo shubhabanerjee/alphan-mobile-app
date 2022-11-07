@@ -334,7 +334,8 @@ class _SharePostState extends State<SharePost> {
 
   Future sharePost() async {
     allphanesuserdata = await SharedPreferences.getInstance();
-    var APIURL = "https://api.allphanes.com/api/posts/sharepost";
+    var APIURL =
+        "https://powerful-shelf-35750.herokuapp.com/api/posts/sharepost";
     Map mapeddate = {
       'referenceUserId': allphanesuserdata!.getString("userid"),
       'postType': "shared",

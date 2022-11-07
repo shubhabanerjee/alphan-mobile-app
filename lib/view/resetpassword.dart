@@ -27,7 +27,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   Future resetPassword() async {
     //allphanesuserdata=await SharedPreferences.getInstance();
     var APIURL =
-        "https://api.allphanes.com/api/users/passwordset/${widget.userid}";
+        "https://powerful-shelf-35750.herokuapp.com/api/users/passwordset/${widget.userid}";
     Map mapeddate = {
       'newPassword': password.text,
       'confirmPassword': conpassword.text

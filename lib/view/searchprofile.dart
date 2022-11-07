@@ -24,7 +24,7 @@ class _SearchProfileState extends State<SearchProfile> {
     print(userid);
 
     http.Response response = await http.get(Uri.parse(
-        "https://api.allphanes.com/api/services/searchbar/${searchtext.text}/$userid"));
+        "https://powerful-shelf-35750.herokuapp.com/api/services/searchbar/${searchtext.text}/$userid"));
     var data = jsonDecode(response.body);
     print(data);
     setState(() {

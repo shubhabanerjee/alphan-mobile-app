@@ -36,8 +36,8 @@ class _MySpaceState extends State<MySpace> with TickerProviderStateMixin {
     String userid = allphanesuserdata!.getString("userid") ?? "";
     print(userid);
     http.Response response = await http.get(Uri.parse(
-        "https://api.allphanes.com/api/posts/multiplefilters?token=${widget.userspaceid}&refToken=${widget.userspaceid}"));
-    // http.Response response=await http.get(Uri.parse("https://api.allphanes.com/api/posts/userspace/${widget.userid}/${widget.userspaceid}"));
+        "https://powerful-shelf-35750.herokuapp.com/api/posts/multiplefilters?token=${widget.userspaceid}&refToken=${widget.userspaceid}"));
+    // http.Response response=await http.get(Uri.parse("https://powerful-shelf-35750.herokuapp.com/api/posts/userspace/${widget.userid}/${widget.userspaceid}"));
     var data = jsonDecode(response.body);
     print(data);
     setState(() {
@@ -52,7 +52,7 @@ class _MySpaceState extends State<MySpace> with TickerProviderStateMixin {
     print(userid);
 
     http.Response response = await http.get(Uri.parse(
-        "https://api.allphanes.com/api/services/numOfPost/62a6e09582ad207566bc1384/$userid"));
+        "https://powerful-shelf-35750.herokuapp.com/api/services/numOfPost/62a6e09582ad207566bc1384/$userid"));
     var data = jsonDecode(response.body);
     print(data);
     setState(() {

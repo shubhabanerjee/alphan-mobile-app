@@ -11,7 +11,8 @@ class CommentPost {
   }
 
   Future<void> postComment(postid, msg) async {
-    var APIURL = "https://api.allphanes.com/api/social/comments";
+    var APIURL =
+        "https://powerful-shelf-35750.herokuapp.com/api/social/comments";
     Map mapeddate = {
       'referenceUserId': referenceuserId,
       'referencePostId': postid,
