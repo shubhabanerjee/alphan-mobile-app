@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "477423557315",
+    "project_id": "allphanes-social",
+    "storage_bucket": "allphanes-social.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477423557315:android:a23a13de232fe71b492076",
+        "android_client_info": {
+          "package_name": "allphanes.com.allphanes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "477423557315-5f80s8dm4jov51bcl6sa9c31c82u2h2u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPuKM2Qy_JVLEvzL5e7jZOJwQPnq6K2pk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "477423557315-5f80s8dm4jov51bcl6sa9c31c82u2h2u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

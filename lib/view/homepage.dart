@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:allphanes/Model/HomePage.dart';
+import 'package:allphanes/provider/icon_provider.dart';
 import 'package:allphanes/services/commentpost.dart';
 import 'package:allphanes/services/post.dart';
 import 'package:allphanes/services/posticontap.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -35,23 +38,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool seecomments = false;
   String commentsection = "See Comments";
 
-  void CheckVersion() async {
-    final newversion = NewVersion(androidId: "allphanes.com.allphanes");
-    final status = await newversion.getVersionStatus();
-    // newversion.showUpdateDialog(
-    //     context: context,
-    //     dialogTitle: "UPDATE!",
-    //   versionStatus: status!,
-    //   //dismissButtonText: "Skip",
-    //   updateButtonText: "Lets Update",
-    //   dialogText: "You can update your app from ${status!.localVersion} to ${status!.storeVersion} to get all features",
-    //   // dismissAction: (){
-    //   //
-    //   // }
-    //
-    // );
-    newversion.showAlertIfNecessary(context: context);
-  }
+  // void CheckVersion() async {
+  //   final newversion = NewVersion(androidId: "allphanes.com.allphanes");
+  //   final status = await newversion.getVersionStatus();
+  //   // newversion.showUpdateDialog(
+  //   //     context: context,
+  //   //     dialogTitle: "UPDATE!",
+  //   //   versionStatus: status!,
+  //   //   //dismissButtonText: "Skip",
+  //   //   updateButtonText: "Lets Update",
+  //   //   dialogText: "You can update your app from ${status!.localVersion} to ${status!.storeVersion} to get all features",
+  //   //   // dismissAction: (){
+  //   //   //
+  //   //   // }
+  //   //
+  //   // );
+  //   newversion.showAlertIfNecessary(context: context);
+  // }
 
   String calculatetime(d) {
     var lastlogindate = DateTime.parse(d);
@@ -76,7 +79,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> fetchusercanvas() async {
     allphanesuserdata = await SharedPreferences.getInstance();
     String userid = allphanesuserdata!.getString("userid") ?? "";
-    print(userid);
 
     http.Response response = await http.get(Uri.parse(
         "https://powerful-shelf-35750.herokuapp.com/api/posts/multiplefilters?private=1&token=$userid&skip=12&&lang="));
@@ -85,6 +87,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // print(d);
     log("===================================================" +
         jsonDecode(response.body).toString());
+
     setState(() {
       mycanvasdata = rsp;
     });
@@ -98,6 +101,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       duration: Duration(seconds: 1),
     );
     // CheckVersion();
+
     fetchusercanvas();
   }
 
@@ -107,6 +111,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     for (int i = 0; i < textcontroller!.length; i++) {
       textcontroller![i].dispose();
     }
+
     super.dispose();
   }
 

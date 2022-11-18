@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:allphanes/view/forgotpassword_inputmailid.dart';
 import 'package:allphanes/view/homepage.dart';
@@ -11,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:new_version/new_version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({Key? key}) : super(key: key);
@@ -92,6 +94,34 @@ class _LogInState extends State<LogIn> {
       print(error);
     }
   }
+
+  bool _isLoggedIn = false;
+  late GoogleSignInAccount _userObj;
+  GoogleSignIn _googleSignIn = GoogleSignIn();
+  // Future<void> signup(BuildContext context) async {
+  //   final GoogleSignIn googleSignIn = GoogleSignIn();
+  //   final GoogleSignInAccount? googleSignInAccount =
+  //       await googleSignIn.signIn(); // await googleSignIn.signIn();
+  //   if (googleSignInAccount != null) {
+  //     final GoogleSignInAuthentication googleSignInAuthentication =
+  //         await googleSignInAccount.authentication;
+  //     final AuthCredential authCredential = GoogleAuthProvider.credential(
+  //         idToken: googleSignInAuthentication.idToken,
+  //         accessToken: googleSignInAuthentication.accessToken);
+
+  //     // Getting users credential
+  //     UserCredential result = await auth.signInWithCredential(authCredential);
+  //     User? user = result.user;
+
+  //     if (result != null) {
+  //       Navigator.pushReplacement(
+  //           context, MaterialPageRoute(builder: (context) => HomePage()));
+  //     } // if result not null we simply call the MaterialpageRoute,
+  //     // for go to the HomePage screen
+  //   } else {
+  //     print(googleSignInAccount!.email.toString());
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -313,9 +343,9 @@ class _LogInState extends State<LogIn> {
                                     Stack(
                                       children: [
                                         SizedBox(
-                                          height: 5.h,
-                                          width: 60.w,
-                                          child: ElevatedButton(
+                                            height: 5.h,
+                                            width: 60.w,
+                                            child: ElevatedButton(
                                               child: Text(
                                                   "LogIn with Facebook"
                                                       .toUpperCase(),
@@ -343,8 +373,21 @@ class _LogInState extends State<LogIn> {
                                                 // shadowColor: MaterialStateProperty.all<Color>(Colors.grey),
                                                 // elevation: MaterialStateProperty.all<double>(10),
                                               ),
-                                              onPressed: facebooklogin),
-                                        ),
+                                              onPressed: () {
+                                                _googleSignIn
+                                                    .signIn()
+                                                    .then((userData) {
+                                                  print(userData!.id);
+                                                  print(userData.email);
+                                                  setState(() {
+                                                    _isLoggedIn = true;
+                                                    _userObj = userData;
+                                                  });
+                                                }).catchError((e) {
+                                                  print(e);
+                                                });
+                                              },
+                                            )),
                                       ],
                                     )
                                   ],
