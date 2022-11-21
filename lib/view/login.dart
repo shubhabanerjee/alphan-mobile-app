@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:allphanes/view/google_signin.dart';
+import 'package:allphanes/widgets/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:allphanes/view/forgotpassword_inputmailid.dart';
@@ -22,7 +24,7 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
-  final k1 = GlobalKey<FormState>();
+  // final k1 = GlobalKey<FormState>();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   SharedPreferences? allphanesuserdata;
@@ -108,11 +110,9 @@ class _LogInState extends State<LogIn> {
   //     final AuthCredential authCredential = GoogleAuthProvider.credential(
   //         idToken: googleSignInAuthentication.idToken,
   //         accessToken: googleSignInAuthentication.accessToken);
-
   //     // Getting users credential
   //     UserCredential result = await auth.signInWithCredential(authCredential);
   //     User? user = result.user;
-
   //     if (result != null) {
   //       Navigator.pushReplacement(
   //           context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -126,380 +126,404 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Color.fromRGBO(154,205,50,1),
-      backgroundColor: Colors.white,
+      backgroundColor: kPrimaryWhite,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Image(
-                image: AssetImage("images/sign_inout_bg.jpg"),
-                fit: BoxFit.fill,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              //for space
+              SizedBox(
+                height: 10.h,
               ),
-            ),
-            Center(
-              child: Form(
-                key: k1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 10.h,
-                      width: 70.w,
-                      child: const Image(
-                        image: AssetImage("images/splsh_logo.png"),
-                        fit: BoxFit.contain,
-                      ),
+              //for logo
+              SizedBox(
+                height: 10.h,
+                width: 50.w,
+                child: Image.asset(
+                  'images/main_logo_black.png',
+                  fit: BoxFit.fill,
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 6.h,
+              ),
+              //login text ui
+              Text(
+                'Login',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 4.h, fontWeight: FontWeight.w300),
+              ),
+              //for space
+              SizedBox(
+                height: 2.h,
+              ),
+              //textfield for email
+              Padding(
+                padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                child: TextFormField(
+                  cursorColor: kPrimaryBlack,
+                  validator: (value) {
+                    if (email.text.length < 1) {
+                      return 'Please put your email id';
+                    }
+                  },
+                  enableInteractiveSelection: true,
+                  controller: email,
+                  style: TextStyle(color: kPrimaryBlack, fontSize: 2.5.h),
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(
+                      Icons.mail_outline_outlined,
+                      color: kPrimaryBlack,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        "Welcome",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 3.h,
-                            fontWeight: FontWeight.bold),
-                      ),
+                    filled: true,
+                    fillColor: kPrimaryWhite,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: kPrimaryBlack),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 80.w,
-                        decoration: BoxDecoration(
-                          //color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          // color: Color.fromRGBO(154,205,50,1),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.grey.withOpacity(1),
-                          //     spreadRadius: 1,
-                          //     blurRadius: 5,
-                          //     offset: Offset(0,5), // changes position of shadow
-                          //   ),
-                          // ],
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 1.5.h),
-                            //autovalidate: false,
-                            validator: (value) {
-                              if (email.text.length < 1) {
-                                return 'Please put your email id';
-                              }
-                            },
-
-                            enableInteractiveSelection: true,
-                            controller: email,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              // labelText: "Email Address",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              hintText: "Your Email Address",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: kPrimaryBlack),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 80.w,
-                        decoration: BoxDecoration(
-                          //color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.grey.withOpacity(1),
-                          //     spreadRadius: 1,
-                          //     blurRadius: 5,
-                          //     offset: Offset(0,5), // changes position of shadow
-                          //   ),
-                          // ],
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 1.5.h),
-                            //autovalidate: false,
-                            validator: (value) {
-                              if (password.text.length < 1) {
-                                return 'Please put your password';
-                              }
-                            },
-
-                            enableInteractiveSelection: true,
-                            controller: password,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              // labelText: "Password",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              hintText: "Your Password",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
+                    hintText: 'Email',
+                    hintStyle: TextStyle(
+                      color: kPrimaryBlack,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: AlignmentDirectional.center,
-                            children: [
-                              SizedBox(
-                                height: 5.h,
-                                width: 60.w,
-                                child: ElevatedButton(
-                                    child: Text("LogIn".toUpperCase(),
-                                        style: TextStyle(
-                                          fontSize: 2.h,
-                                          color:
-                                              Color.fromRGBO(154, 205, 50, 1),
-                                        )),
-                                    style: ButtonStyle(
-                                      foregroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.white),
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.black),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              side: BorderSide(
-                                                  color: Colors.black))),
-                                      // shadowColor: MaterialStateProperty.all<Color>(Colors.grey),
-                                      // elevation: MaterialStateProperty.all<double>(10),
-                                    ),
-                                    onPressed: () {
-                                      if (k1.currentState!.validate()) {
-                                        setState(() {
-                                          indicator = 1;
-                                        });
-                                        userLogin();
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: "Put email and password",
-                                            gravity: ToastGravity.BOTTOM,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor:
-                                                Color.fromRGBO(154, 205, 50, 1),
-                                            textColor: Colors.red,
-                                            fontSize: 12.0);
-                                      }
-                                    }), //user login button
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 13.h),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        SizedBox(
-                                            height: 5.h,
-                                            width: 60.w,
-                                            child: ElevatedButton(
-                                              child: Text(
-                                                  "LogIn with Facebook"
-                                                      .toUpperCase(),
-                                                  style: TextStyle(
-                                                    fontSize: 2.h,
-                                                    color: const Color.fromRGBO(
-                                                        154, 205, 50, 1),
-                                                  )),
-                                              style: ButtonStyle(
-                                                foregroundColor:
-                                                    MaterialStateProperty.all<
-                                                        Color>(Colors.white),
-                                                backgroundColor:
-                                                    MaterialStateProperty.all<
-                                                        Color>(Colors.black),
-                                                shape: MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        side: BorderSide(
-                                                            color:
-                                                                Colors.black))),
-                                                // shadowColor: MaterialStateProperty.all<Color>(Colors.grey),
-                                                // elevation: MaterialStateProperty.all<double>(10),
-                                              ),
-                                              onPressed: () {
-                                                _googleSignIn
-                                                    .signIn()
-                                                    .then((userData) {
-                                                  print(userData!.id);
-                                                  print(userData.email);
-                                                  setState(() {
-                                                    _isLoggedIn = true;
-                                                    _userObj = userData;
-                                                  });
-                                                }).catchError((e) {
-                                                  print(e);
-                                                });
-                                              },
-                                            )),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                              indicator == 1
-                                  ? Container(
-                                      height: 5.h,
-                                      width: 50.w,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              height: 15,
-                                              width: 15,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  backgroundColor:
-                                                      Color.fromRGBO(
-                                                          154, 205, 50, 1),
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(Colors.white),
-                                                  strokeWidth: 2,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        ],
-                      ),
+                  ),
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 3.h,
+                width: 100.w,
+              ),
+              //textfield for password
+              Padding(
+                padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                child: TextFormField(
+                  cursorColor: kPrimaryBlack,
+                  validator: (value) {
+                    if (password.text.length < 1) {
+                      return 'Please put your password';
+                    }
+                  },
+                  enableInteractiveSelection: true,
+                  controller: password,
+                  obscureText: true,
+                  style: TextStyle(color: kPrimaryBlack, fontSize: 2.5.h),
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(
+                      Icons.lock_outline_rounded,
+                      color: kPrimaryBlack,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't Have an Account?",
-                            style: TextStyle(
-                                color: Color.fromRGBO(154, 205, 50, 1),
-                                fontWeight: FontWeight.bold),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Register()));
-                            },
-                            child: Text(
-                              "Register",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.black,
-                                  decorationThickness: 2),
-                            ),
-                          )
-                        ],
-                      ),
+                    filled: true,
+                    fillColor: kPrimaryWhite,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: kPrimaryBlack),
                     ),
-                    Row(
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: kPrimaryBlack),
+                    ),
+                    hintText: 'Password',
+                    hintStyle: TextStyle(
+                      color: kPrimaryBlack,
+                    ),
+                  ),
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 5.h,
+              ),
+              //button for login
+              Padding(
+                padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                child: GestureDetector(
+                  onTap: () {
+                    // if (k1.currentState!.validate()) {
+                    // setState(() {
+                    //   indicator = 1;
+                    // });
+                    userLogin();
+                    // } else {
+                    //   Fluttertoast.showToast(
+                    //       msg: "Put email and password",
+                    //       gravity: ToastGravity.BOTTOM,
+                    //       timeInSecForIosWeb: 1,
+                    //       backgroundColor: Color.fromRGBO(154, 205, 50, 1),
+                    //       textColor: Colors.red,
+                    //       fontSize: 12.0);
+                    // }
+                  },
+                  child: Container(
+                    height: 5.h,
+                    width: 100.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kPrimaryBlack),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => InputMailId()));
-                            },
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ))
+                        Text(
+                          'Login'.toUpperCase(),
+                          style:
+                              TextStyle(color: kPrimaryWhite, fontSize: 2.5.h),
+                        ),
                       ],
                     ),
-                    unlock == true
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Lottie.asset(
-                              "images/unlock.json",
-                              width: 5.h,
-                              height: 5.h,
-                              fit: BoxFit.fill,
-                              repeat: false,
-                            ),
-                          )
-                        : Container()
+                  ),
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 2.h,
+              ),
+              //forgot password
+              Padding(
+                padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                child: SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        child: Text(
+                          'Forgot password?',
+                          style:
+                              TextStyle(color: kPrimaryBlack, fontSize: 2.2.h),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const InputMailId()));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 4.h,
+              ),
+              //for dividor lines
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: kPrimaryBlack,
+                      indent: 10.w,
+                      endIndent: 3.w,
+                    ),
+                  ),
+                  Text(
+                    'OR',
+                    style: TextStyle(color: kPrimaryBlack, fontSize: 2.h),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: kPrimaryBlack,
+                      indent: 3.w,
+                      endIndent: 10.w,
+                    ),
+                  ),
+                ],
+              ),
+              //for space
+              SizedBox(
+                height: 3.h,
+              ),
+              //for login using Google
+              Padding(
+                padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                child: InkWell(
+                  child: Container(
+                    height: 5.h,
+                    width: 100.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kPrimaryBlue),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 3.w,
+                        ),
+                        const Icon(
+                          Icons.facebook_rounded,
+                          color: kPrimaryWhite,
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Text(
+                          'Login with Google',
+                          style: TextStyle(
+                              color: kPrimaryWhite,
+                              fontSize: 2.h,
+                              fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    // _googleSignIn
+                    //     .signIn()
+                    //     .then((GoogleSignInAccount? userData) {
+                    //   print(userData!.id);
+                    //   print(userData.email);
+                    //   setState(() {
+                    //     _isLoggedIn = true;
+                    //     _userObj = userData;
+                    //   });
+                    // }).catchError((e) {
+                    //   print(e);
+                    // });
+                    // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    //     builder: (BuildContext context) => const Register()));
+                  },
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 3.h,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                child: InkWell(
+                  child: Container(
+                    height: 5.h,
+                    width: 100.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kPrimaryBlue),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 3.w,
+                        ),
+                        const Icon(
+                          Icons.facebook_rounded,
+                          color: kPrimaryWhite,
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Text(
+                          'Login with Facebook',
+                          style: TextStyle(
+                              color: kPrimaryWhite,
+                              fontSize: 2.h,
+                              fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    // Authentication.signOut(context: context);
+                    Authentication.signInWithGoogle(context: context);
+                    // _googleSignIn.signIn().then((userData) {
+                    //   print(userData!.id);
+                    //   print(userData.email);
+                    //   setState(() {
+                    //     _isLoggedIn = true;
+                    //     _userObj = userData;
+                    //   });
+                    // }).catchError((e) {
+                    //   print(e);
+                    // });
+                    // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    //     builder: (BuildContext context) => const Register()));
+                  },
+                ),
+              ),
+              //for space
+              SizedBox(
+                height: 3.h,
+              ),
+              //dont have account register section
+              SizedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: TextStyle(fontSize: 2.2.h, color: kPrimaryBlack),
+                    ),
+                    InkWell(
+                      child: Text(
+                        "Register",
+                        style: TextStyle(
+                            fontSize: 2.6.h,
+                            color: kPrimaryBlack,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Register()));
+                      },
+                    )
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class Authentication {
+  static Future signInWithGoogle({required BuildContext context}) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    // User? user;
+
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      try {
+        final UserCredential userCredential =
+            await auth.signInWithCredential(credential);
+        if (userCredential.additionalUserInfo!.isNewUser == true) {
+          print("--------------------------------------------------------");
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => GoogleRegister()));
+        } else {
+          // signOut(context: context);
+          print("+++++++++++++++++++++++++++++++");
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'account-exists-with-different-credential') {
+          // ...
+        } else if (e.code == 'invalid-credential') {
+          // ...
+        }
+      } catch (e) {
+        // ...
+      }
+    }
+  }
+
+  static Future<void> signOut({required BuildContext context}) async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {}
   }
 }
