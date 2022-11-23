@@ -1,25 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:allphanes/view/homepage.dart';
-import 'package:allphanes/view/login.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../widgets/constant.dart';
+
 class GoogleRegister extends StatefulWidget {
-  const GoogleRegister({Key? key}) : super(key: key);
+  final UserCredential additionalUserInfo;
+  const GoogleRegister({required this.additionalUserInfo, Key? key})
+      : super(key: key);
 
   @override
   State<GoogleRegister> createState() => _GoogleRegisterState();
 }
 
 class _GoogleRegisterState extends State<GoogleRegister> {
+  List<CountryCode> countriesCode = [];
+  bool isCountriesLoaded = false;
+  CountryCode? selectedCountryCode;
   final k1 = GlobalKey<FormState>();
   TextEditingController firstname = TextEditingController();
   TextEditingController lastname = TextEditingController();
@@ -33,6 +37,30 @@ class _GoogleRegisterState extends State<GoogleRegister> {
   var indicator;
   SharedPreferences? allphanesuserdata;
   bool unlock = false;
+
+  Future<List<CountryCode>> getApiCountryCode() async {
+    var response = await http.get(Uri.parse(
+        'https://powerful-shelf-35750.herokuapp.com/api/users/country'));
+    if (response.statusCode == 200) {
+      var mapResponse = jsonDecode(response.body);
+      return (mapResponse['responseData'] as List)
+          .map((mapCountryCode) => CountryCode.fromMap(mapCountryCode))
+          .toList();
+    } else {
+      throw {Error};
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getApiCountryCode().then((_countriesCode) {
+      countriesCode = _countriesCode;
+      setState(() {
+        isCountriesLoaded = true;
+      });
+    });
+  }
 
   Future userRegister() async {
     allphanesuserdata = await SharedPreferences.getInstance();
@@ -100,566 +128,247 @@ class _GoogleRegisterState extends State<GoogleRegister> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Color.fromRGBO(154,205,50,1),
-      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: kPrimaryWhite,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Image(
-                image: AssetImage("images/sign_inout_bg.jpg"),
-                fit: BoxFit.fill,
-              ),
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 10.h,
+          ),
+          SizedBox(
+            height: 10.h,
+            width: 50.w,
+            child: Image.asset(
+              'images/main_logo_black.png',
+              fit: BoxFit.fill,
             ),
-            Center(
-              child: Form(
-                key: k1,
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(30.0),
-                  children: [
-                    Center(
-                      child: Container(
-                        height: 10.h,
-                        width: 70.w,
-                        child: const Image(
-                          image: AssetImage("images/splsh_logo.png"),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    Center(
-                        child: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        "Register",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 3.h,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {
-                              if (firstname.text.length < 1) {
-                                return 'Pleasse put your firstname';
-                              } else {}
-                            },
-                            enableInteractiveSelection: true,
-                            controller: firstname,
-                            decoration: InputDecoration(
-                              // labelText: "First Name",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "Your First Name",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {
-                              if (lastname.text.length < 1) {
-                                return 'Please put your lastname';
-                              } else {}
-                            },
-                            enableInteractiveSelection: true,
-                            controller: lastname,
-                            decoration: InputDecoration(
-                              // labelText: "Last Name",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "Your Last Name",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {
-                              if (username.text.length < 1) {
-                                return 'Please set a username';
-                              } else {}
-                            },
-                            enableInteractiveSelection: true,
-                            controller: username,
-                            decoration: InputDecoration(
-                              // labelText: "UserName",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "put a username",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: showname,
-                          onChanged: (value) {
-                            setState(() {
-                              showname = !showname;
-                            });
-                            print(showname);
-                          },
-                        ),
-                        Text("Show as display name")
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {
-                              if (email.text.length < 1) {
-                                return 'Please put your email id';
-                              } else if (!email.text.contains('@')) {
-                                return 'Incorrect email id';
-                              } else {}
-                            },
-                            enableInteractiveSelection: true,
-                            controller: email,
-                            decoration: InputDecoration(
-                              // labelText: "Email ID",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "Your Email ID",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {
-                              if (phone.text.length < 1) {
-                                return 'Please put your phone number';
-                              } else if (phone.text.length != 10) {
-                                return 'Incorrect phone number';
-                              } else {}
-                            },
-                            enableInteractiveSelection: true,
-                            controller: phone,
-                            decoration: InputDecoration(
-                              // labelText: "Phone Number",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "Your Phone Number",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.phone,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            obscureText: true,
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {
-                              if (password.text.length < 1) {
-                                return 'Please set a password';
-                              } else if (password.text.length < 8) {
-                                return 'It requires minimum 8 characters';
-                              } else {}
-                            },
-                            enableInteractiveSelection: true,
-                            controller: password,
-                            decoration: InputDecoration(
-                              // labelText: "Password",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "Set a Password",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Container(
-                        height: 6.5.h,
-                        width: 70.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextFormField(
-                            //obscureText: true,
-                            cursorColor: Colors.white,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 2.h),
-                            validator: (value) {},
-                            enableInteractiveSelection: true,
-                            controller: refcode,
-                            decoration: InputDecoration(
-                              // labelText: "Password",
-                              // labelStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              fillColor: Color.fromRGBO(154, 205, 50, 1),
-                              hintText: "Put referel code here",
-                              hintStyle: TextStyle(color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromRGBO(154, 205, 50, 1),
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: termcondition,
-                          onChanged: (v) {
-                            setState(() {
-                              termcondition = !termcondition;
-                            });
-                          },
-                        ),
-                        Text("Agree to our "),
-                        Text(
-                          "Terms of use",
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                        Text(" & "),
-                        Text("Privacy Policy",
-                            style: TextStyle(
-                                color: Colors.red, fontWeight: FontWeight.bold))
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            children: [
-                              SizedBox(
-                                height: 5.h,
-                                width: 50.w,
-                                child: ElevatedButton(
-                                    child: Text("Register".toUpperCase(),
-                                        style: TextStyle(
-                                          fontSize: 2.h,
-                                          color:
-                                              Color.fromRGBO(154, 205, 50, 1),
-                                        )),
-                                    style: ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.white),
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.black),
-                                        shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                side: BorderSide(
-                                                    color: Colors.black)))),
-                                    onPressed: () async {
-                                      if (k1.currentState!.validate()) {
-                                        if (termcondition == true) {
-                                          setState(() {
-                                            indicator = 1;
-                                          });
-                                          userRegister();
-                                        } else {
-                                          Fluttertoast.showToast(
-                                              msg:
-                                                  "Please check out term & condition first",
-                                              gravity: ToastGravity.BOTTOM,
-                                              timeInSecForIosWeb: 1,
-                                              backgroundColor: Color.fromRGBO(
-                                                  154, 205, 50, 1),
-                                              textColor: Colors.red,
-                                              fontSize: 12.0);
-                                        }
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg:
-                                                "Fill all the fields correctly",
-                                            gravity: ToastGravity.BOTTOM,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor:
-                                                Color.fromRGBO(154, 205, 50, 1),
-                                            textColor: Colors.red,
-                                            fontSize: 12.0);
-                                      }
-                                    }),
-                              ),
-                              indicator == 1
-                                  ? Container(
-                                      height: 5.h,
-                                      width: 50.w,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              height: 15,
-                                              width: 15,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  backgroundColor:
-                                                      Color.fromRGBO(
-                                                          154, 205, 50, 1),
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(Colors.white),
-                                                  strokeWidth: 2,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Already Have an Account?",
-                            style: TextStyle(
-                              color: Color.fromRGBO(154, 205, 50, 1),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const LogIn()));
-                            },
-                            child: Text(
-                              "LogIn",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.black,
-                                  decorationThickness: 2),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    unlock == true
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Lottie.asset(
-                              "images/unlock.json",
-                              width: 5.h,
-                              height: 5.h,
-                              fit: BoxFit.fill,
-                              repeat: false,
-                            ),
-                          )
-                        : Container()
-                  ],
+          ),
+          SizedBox(
+            height: 2.h,
+          ),
+          Text(
+            'Login with Google',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 4.h, fontWeight: FontWeight.w300),
+          ),
+          SizedBox(
+            height: 2.h,
+          ),
+          CircleAvatar(
+            radius: 4.h,
+            child:
+                ClipOval(child: Image.asset('images/default_profileimage.png')),
+          ),
+          SizedBox(
+            height: 1.h,
+          ),
+          Text(
+            widget.additionalUserInfo.user!.displayName.toString(),
+            style: TextStyle(fontSize: 2.5.h, color: kPrimaryBlack),
+          ),
+          SizedBox(
+            height: 0.5.h,
+          ),
+          Text(
+            widget.additionalUserInfo.user!.email.toString(),
+            style: TextStyle(fontSize: 2.h, color: kPrimaryBlack),
+          ),
+          SizedBox(
+            height: 2.h,
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 10.w, left: 10.w, top: 2.h),
+            child: TextFormField(
+              cursorColor: kPrimaryBlack,
+              enableInteractiveSelection: true,
+              style: TextStyle(color: kPrimaryBlack, fontSize: 2.5.h),
+              decoration: const InputDecoration(
+                suffixIcon: Icon(
+                  Icons.person,
+                  color: kPrimaryBlack,
+                ),
+                filled: true,
+                fillColor: kPrimaryWhite,
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: kPrimaryBlack),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: kPrimaryBlack),
+                ),
+                hintText: 'Surname to Continue',
+                hintStyle: TextStyle(
+                  color: kPrimaryBlack,
                 ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 10.w, left: 10.w, top: 2.h),
+            child: TextFormField(
+              cursorColor: kPrimaryBlack,
+              enableInteractiveSelection: true,
+              style: TextStyle(color: kPrimaryBlack, fontSize: 2.5.h),
+              decoration: const InputDecoration(
+                suffixIcon: Icon(
+                  Icons.phone,
+                  color: kPrimaryBlack,
+                ),
+                filled: true,
+                fillColor: kPrimaryWhite,
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: kPrimaryBlack),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: kPrimaryBlack),
+                ),
+                hintText: 'Phone Number',
+                hintStyle: TextStyle(
+                  color: kPrimaryBlack,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 1.h,
+          ),
+          Flexible(
+            child: GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.only(right: 10.w, left: 10.w, top: 2.h),
+                child: Container(
+                  width: double.maxFinite,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 1.0, color: kPrimaryBlack),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      Text(
+                        selectedCountryCode?.dialCode ?? '+91',
+                        style: TextStyle(fontSize: 2.5.h, color: kPrimaryBlack),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: CircleAvatar(
+                          backgroundColor: kPrimaryOffWhite,
+                          radius: 2.h,
+                          child: ClipOval(
+                            child: ImageIcon(
+                              AssetImage('images/down_arrow.png'),
+                              size: 2.5.h,
+                              color: kPrimaryBlack,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 4.w,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              onTap: () {
+                if (isCountriesLoaded) {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: SizedBox(
+                            width: double.maxFinite,
+                            child: ListView.builder(
+                              itemCount: countriesCode.length,
+                              itemBuilder: (context, index) {
+                                var countryCode = countriesCode[index];
+                                return Card(
+                                  child: ListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedCountryCode = countryCode;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    leading: Text(countryCode.dialCode),
+                                    title: Text(countryCode.name),
+                                    trailing: Text(countryCode.code),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      });
+                }
+              },
+            ),
+          ),
+          SizedBox(
+            height: 7.h,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10.w, right: 10.w),
+            child: GestureDetector(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                width: double.maxFinite,
+                decoration: BoxDecoration(
+                    color: kPrimaryBlack,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Center(
+                  child: Text(
+                    'Register as Sri',
+                    style: TextStyle(
+                        fontSize: 2.5.h,
+                        color: kPrimaryWhite,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              onTap: () {},
+            ),
+          )
+        ],
+      )),
     );
+  }
+}
+
+class CountryCode {
+  String id;
+  String name;
+  String dialCode;
+  String code;
+
+  CountryCode(
+      {required this.id,
+      required this.name,
+      required this.dialCode,
+      required this.code});
+
+  factory CountryCode.fromMap(Map countryMapData) {
+    return CountryCode(
+      id: countryMapData['_id'],
+      name: countryMapData['name'],
+      dialCode: countryMapData['dial_code'],
+      code: countryMapData['code'],
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CountryCode && id == other.id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  String toString() {
+    return 'CountryCode(id : $id, name : $name, dialCode : $dialCode, code : $code)';
   }
 }

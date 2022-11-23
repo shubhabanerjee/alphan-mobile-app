@@ -503,7 +503,10 @@ class Authentication {
         if (userCredential.additionalUserInfo!.isNewUser == true) {
           print("--------------------------------------------------------");
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => GoogleRegister()));
+              context,
+              MaterialPageRoute(
+                  builder: (_) =>
+                      GoogleRegister(additionalUserInfo: userCredential)));
         } else {
           // signOut(context: context);
           print("+++++++++++++++++++++++++++++++");
